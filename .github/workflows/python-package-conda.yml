@@ -47,11 +47,11 @@ jobs:
     - name: Build exe
       run: |
         conda install pyinstaller
-        pyinstaller --onefile --name blockparse-win site_parse.py
+        pyinstaller --onefile --distpath ${{github.workspace}} --name blockparse-win site_parse.py
         echo %cd%
     - name: create artifact
       uses: actions/upload-artifact@v2
       with:
         name: blockparse-win
-        path: dist/blockparse.exe
+        path: ${{github.workspace}}/dist/blockparse.exe
 
