@@ -48,6 +48,7 @@ jobs:
       run: |
         conda install pyinstaller
         pyinstaller --onefile --name blockparse-win site_parse.py
+        echo %cd%
     - name: create artifact
       uses: actions/upload-artifact@v2
       with:
