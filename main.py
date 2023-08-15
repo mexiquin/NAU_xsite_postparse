@@ -5,9 +5,9 @@ def to_post_endpoint(url) -> tuple:
     from urllib.parse import urljoin
     return (urljoin(url, endpoints[0]), urljoin(url, endpoints[1]))
 
-def get_all_nau_sites() -> list:
-    IN_DOT_NAU = "https://in.nau.edu/wp-json/enterprise/v1/site-list"
-    NAU = "https://nau.edu/coe/wp-json/enterprise/v1/site-list"
+def get_all_nau_sites(login) -> list:
+    IN_DOT_NAU = "https://in.nau.edu/wp-json/enterprise/v1/sites-by-theme/nau-marketing-2021"
+    NAU = "https://nau.edu/coe/wp-json/enterprise/v1/sites-by-theme/nau-marketing-2021"
 
     urls = []
 
@@ -15,7 +15,12 @@ def get_all_nau_sites() -> list:
     import concurrent.futures as cf
 
     with cf.ThreadPoolExecutor() as executor:
-        results = executor.map(requests.get, [NAU, IN_DOT_NAU])
+        def worker(param):
+            try:
+                return requests.get(param, auth=login)
+            except:
+                return None
+        results = executor.map(worker, [NAU, IN_DOT_NAU])
 
         for result in results:
             result.encoding = 'utf-8-sig'
@@ -39,9 +44,13 @@ def get_posts(endpoint: str) -> list:
     import concurrent.futures as cf
     import requests
     with cf.ThreadPoolExecutor() as executor:
-        results = executor.map(requests.get, potential_pages)
-
-    executor.shutdown(wait=True)
+        def worker(param):
+            try:
+                return requests.get(param)
+            except:
+                return None
+            
+        results = executor.map(worker, potential_pages)
 
     results = [result for result in map(serialize, results)]
 
@@ -50,7 +59,7 @@ def get_posts(endpoint: str) -> list:
             json_collection = json_collection + [post['link'] for post in result]
 
 
-    if len(result) > 0:
+    if result and len(result) > 0:
         json_collection = json_collection + [post['link'] for post in result]
 
     return json_collection
@@ -83,50 +92,43 @@ def find_selector(url: str, selector: str) -> tuple:
         results = executor.map(get_posts, [post, page])
         all_posts = [link for grouping in results for link in grouping]
 
-        matches = executor.map(search_selector, all_posts, [selector] * len(all_posts))
+        matches = executor.map(search_selector, all_posts, [selector] * (len(all_posts) if all_posts else 1))
         matches = [match for match in matches if match[1] > 0]
 
     return matches
 
 
-def gen_pagination_urls(endpoint_url: str) -> list:
+def gen_pagination_urls(endpoint_url: str, max=20) -> list:
     per_page = 15
-    max_pagination = per_page * 50
+    max_pagination = per_page * max
     urls = ["https://" + endpoint_url + "?per_page=" + str(per_page)  + (f"&offset={str(offset)}" if offset > 0 else '') for offset in range(0, max_pagination+1, per_page)]
     return urls
 
 def main():
-
-    # command line arguments to accept selector and optional output directory
-    import argparse
-    parser = argparse.ArgumentParser(description='Find selector in NAU sites')
-    parser.add_argument('selector', type=str, help='CSS selector to find')
-    parser.add_argument('-o', '--output', type=str, help='Output directory')
-    parser.add_argument('-e', '--exclude', nargs='+', help='List of sites to exclude', default='')
-
-
     
+    import argparse
+    import sys
+    description = "Find selector in NAU sites. You can use this to print out all marketing-2021 sites that contain a specific selector.\
+        Or you can pipe the STDOUT to a file to save the results for later. All progress is printed to STDERR."
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('selector', type=str, help='CSS selector to find')
+    parser.add_argument('-u','--username', type=str, help='Username for NAU sites', default='')
+    parser.add_argument('-p','--password', type=str, help='Password for NAU sites', default='')
     args = parser.parse_args()
 
     selector = args.selector
-    output = args.output
-    exclude = args.exclude
+    login = (args.username, args.password)
 
-    sites = get_all_nau_sites()
+    sites = get_all_nau_sites(login)
+    sys.stderr.write("[INFO] Found " + str(len(sites)) + " sites\n")
 
-    import pandas as pd
+    for iter, site in enumerate(sites):
+        sys.stderr.write("[INFO] Processing site " + str(iter) + " of " + str(len(sites)) + f" ({site})\n")
+        matches = find_selector(site, selector)
+        for item in matches:
+            sys.stdout.write("Page: " + item[0] + "\tNum Blocks: " + str(item[1]) + "\n")
 
-    df = []
-
-    for site in sites:
-        for keyword in exclude:
-            if keyword not in site:
-                matches = find_selector(site, selector)
-                for item in matches:
-                    print("Page: " + item[0], "Num Blocks: " + str(item[1]))
-                df.append({site: matches})
-
-    print("Done...")
+    sys.stderr.write("[INFO] Process Complete...\n")
 
 
 if __name__ == "__main__":
