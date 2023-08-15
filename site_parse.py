@@ -35,8 +35,8 @@ def get_posts(endpoint: str) -> list:
     json_collection = []
     potential_pages = gen_pagination_urls(endpoint)
     def serialize(response):
-        response.encoding = 'utf-8-sig'
         try:
+            response.encoding = 'utf-8-sig'
             return response.json()
         except:
             pass

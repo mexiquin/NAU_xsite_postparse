@@ -1,7 +1,0 @@
-name: pyinstaller-env
-dependencies:
-  - pyinstaller
-  - pandas
-  - beautifulsoup4
-  - requests
-  - python=3.11
