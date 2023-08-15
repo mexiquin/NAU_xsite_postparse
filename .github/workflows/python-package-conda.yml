@@ -48,7 +48,7 @@ jobs:
       run: |
         conda install pyinstaller
         pyinstaller --onefile --distpath ${{github.workspace}} --name blockparse-win site_parse.py
-        echo %cd%
+        echo "working dir: ${{github.workspace}}"
     - name: create artifact
       uses: actions/upload-artifact@v2
       with:
