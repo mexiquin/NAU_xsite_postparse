@@ -46,6 +46,7 @@ jobs:
         conda env update --file environment.yml --name base
     - name: Build exe
       run: |
+        conda install pyinstaller
         pyinstaller --onefile --name blockparse-win site_parse.py
     - name: create artifact
       uses: actions/upload-artifact@v2
