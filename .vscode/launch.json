@@ -11,7 +11,20 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["section.nau-block-panels", "-e", "alumni"]
+            "args": [".nau-block-left-nav-top-bound", "-u", "${input:username}", "-p", "${input:password}"]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "username",
+            "type": "promptString",
+            "description": "Enter your username",
+        },
+
+        {
+            "id": "password",
+            "type": "promptString",
+            "description": "Enter your password",
         }
     ]
 }
