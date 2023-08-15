@@ -31,7 +31,10 @@ def get_posts(endpoint: str) -> list:
     potential_pages = gen_pagination_urls(endpoint)
     def serialize(response):
         response.encoding = 'utf-8-sig'
-        return response.json()
+        try:
+            return response.json()
+        except:
+            pass
 
     import concurrent.futures as cf
     import requests
@@ -107,6 +110,7 @@ def main():
 
     selector = args.selector
     output = args.output
+    exclude = args.exclude
 
     sites = get_all_nau_sites()
 
@@ -115,11 +119,12 @@ def main():
     df = []
 
     for site in sites:
-        if args.exclude not in site:
-            matches = find_selector(site, selector)
-            for item in matches:
-                print("Page: " + item[0], "Num Blocks: " + str(item[1]))
-            df.append({site: matches})
+        for keyword in exclude:
+            if keyword not in site:
+                matches = find_selector(site, selector)
+                for item in matches:
+                    print("Page: " + item[0], "Num Blocks: " + str(item[1]))
+                df.append({site: matches})
 
     print("Done...")
 
