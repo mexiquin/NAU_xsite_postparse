@@ -5,31 +5,31 @@ on:
     branches: [ main ]
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  # build-linux:
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.11'
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-    - name: Install dependencies
-      run: |
-        conda env update --file environment.yml --name base
-    - name: Build exe
-      run: |
-        pyinstaller --onefile --name blockparse site_parse.py
-        echo %cd%
-    - name: create artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: blockparse
-        path: dist/blockparse
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Set up Python 3.10
+  #     uses: actions/setup-python@v3
+  #     with:
+  #       python-version: '3.11'
+  #   - name: Add conda to system path
+  #     run: |
+  #       # $CONDA is an environment variable pointing to the root of the miniconda directory
+  #       echo $CONDA/bin >> $GITHUB_PATH
+  #   - name: Install dependencies
+  #     run: |
+  #       conda env update --file environment.yml --name base
+  #   - name: Build exe
+  #     run: |
+  #       pyinstaller --onefile --name blockparse site_parse.py
+  #       echo %cd%
+  #   - name: create artifact
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: blockparse
+  #       path: dist/blockparse
 
   build-windows:
     runs-on: windows-latest
