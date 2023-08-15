@@ -9,16 +9,20 @@ def get_all_nau_sites() -> list:
     IN_DOT_NAU = "https://in.nau.edu/wp-json/enterprise/v1/site-list"
     NAU = "https://nau.edu/coe/wp-json/enterprise/v1/site-list"
 
+    urls = []
+
     import requests
-    in_sites = requests.get(IN_DOT_NAU)
-    in_sites.encoding = 'utf-8-sig'
-    in_sites = in_sites.json()
+    import concurrent.futures as cf
 
-    nau_sites = requests.get(NAU)
-    nau_sites.encoding = 'utf-8-sig'
-    nau_sites = nau_sites.json()
+    with cf.ThreadPoolExecutor() as executor:
+        results = executor.map(requests.get, [IN_DOT_NAU, NAU])
 
-    urls = [site['url'] for site in nau_sites] + [site['url'] for site in in_sites]
+        for result in results:
+            result.encoding = 'utf-8-sig'
+            result = result.json()
+
+            urls = urls + [site['url'] for site in result]
+
 
     return urls
 
@@ -67,12 +71,27 @@ def find_selector(url: str, selector: str) -> tuple:
 
 
 def main():
-    selector = "section.nau-block-panels"
+
+    # command line arguments to accept selector and optional output directory
+    import argparse
+    parser = argparse.ArgumentParser(description='Find selector in NAU sites')
+    parser.add_argument('selector', type=str, help='CSS selector to find')
+    parser.add_argument('-o', '--output', type=str, help='Output directory')
+    args = parser.parse_args()
+
+    selector = args.selector
+    output = args.output
 
     sites = get_all_nau_sites()
 
     for site in sites:
-        find_selector(site, selector)
+        if output:
+            with open(output, 'a') as f:
+                f.write(f"{site}, {find_selector(site, selector)}\n")
+        else:
+            print(f"{site}, {find_selector(site, selector)}")
+
+    print("Done...")
 
 
 if __name__ == "__main__":
