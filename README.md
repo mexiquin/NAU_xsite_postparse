@@ -5,7 +5,9 @@
 ```
 usage: blockparse-win.exe [-h] [-u USERNAME] [-p PASSWORD] selector
 
-Find selector in NAU sites. You can use this to print out all marketing-2021 sites that contain a specific selector. Or you can pipe the STDOUT to a file to save the results for later.
+Find selector in NAU sites. You can use this to print out all marketing-2021 sites that contain a specific selector.
+Or you can pipe the STDOUT to a file to save the results for later.
+
 All progress is printed to STDERR.
 
 positional arguments:
