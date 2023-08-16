@@ -1,9 +1,0 @@
-name: pyinstaller-env
-channels:
-  - conda-forge
-  - defaults
-dependencies:
-  - pyinstaller>=5.13
-  - beautifulsoup4
-  - requests
-  - python=3.11
