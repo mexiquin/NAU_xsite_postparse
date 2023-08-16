@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "nau_xsite_postparse"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "3.11.*"
 beautifulsoup4 = "^4.12.2"
 requests = "^2.31.0"
 
