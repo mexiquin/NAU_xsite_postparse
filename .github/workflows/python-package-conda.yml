@@ -46,9 +46,14 @@ jobs:
     - name: Build exe
       run: |
         pyinstaller --onefile --name blockparse-win site_parse.py
-    - name: create artifact
-      uses: actions/upload-artifact@v2
+    - name: Create Release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: blockparse-win
-        path: dist/blockparse-win.exe
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+        artifacts: dist/*.exe
 
