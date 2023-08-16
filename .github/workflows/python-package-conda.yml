@@ -47,13 +47,7 @@ jobs:
       run: |
         pyinstaller --onefile --name blockparse-win site_parse.py
     - name: Create Release
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: ncipollo/release-action@v1.12.0
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-        artifacts: dist/*.exe
+        artifacts: "dist/*.exe"
 
