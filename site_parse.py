@@ -108,12 +108,12 @@ def main():
     
     import argparse
     import sys
-    description = "Find block by selector in NAU sites. \
-    You can use this to print out all marketing-2021 sites that contain a specific selector.\
-    Or you can pipe the STDOUT to a file to save the results for later.\
-    Data is sent to STDOUT. All progress is printed to STDERR.\
-    Output data will be in TSV format:\
-    page/post-url (tab) number-of-blocks-present"
+    description = "Find block by selector in NAU sites.\n\
+    You can use this to print out all marketing-2021 sites that contain a specific selector.\n\
+    Or you can pipe the STDOUT to a file to save the results for later.\n\
+    Data is sent to STDOUT. All progress is printed to STDERR.\n\
+    Output data will be in TSV format:\n\
+    page/post-url (tab) number-of-blocks-present\n"
     
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('selector', type=str, help='CSS selector to find')
