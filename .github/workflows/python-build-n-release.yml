@@ -45,11 +45,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install poetry
-        poetry install
+        pip install -r requirements.txt
     - name: Build exe
       run: |
-        poetry run pyinstaller --onefile --name blockparse-win site_parse.py
+        pyinstaller --onefile --name blockparse-win site_parse.py
     - name: create artifact
       uses: actions/upload-artifact@v2
       with:
