@@ -95,8 +95,9 @@ def find_selector(url: str, selector: str) -> tuple:
         matches = executor.map(search_selector, all_posts, [selector] * (len(all_posts) if all_posts else 1))
         matches = [match for match in matches if match[1] > 0]
 
-    return matches
-
+    import sys
+    sys.stdout.write("Page: " + matches[0] + "\tNum Blocks: " + str(matches[1]) + "\n")
+    
 
 def gen_pagination_urls(endpoint_url: str, max=20) -> list:
     per_page = 15
@@ -129,9 +130,7 @@ def main():
 
     for iter, site in enumerate(sites):
         sys.stderr.write("[INFO] Processing site " + str(iter) + " of " + str(len(sites)) + f" ({site})\n")
-        matches = find_selector(site, selector)
-        for item in matches:
-            sys.stdout.write("Page: " + item[0] + "\tNum Blocks: " + str(item[1]) + "\n")
+        find_selector(site, selector)
 
     sys.stderr.write("[INFO] Process Complete...\n")
 
