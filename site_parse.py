@@ -124,16 +124,22 @@ def main():
     selector = args.selector
     login = (args.username, args.password)
 
-    sites = get_all_nau_sites(login)
-    sys.stderr.write("[INFO] Found " + str(len(sites)) + " sites\n")
+    try:
 
-    for iter, site in enumerate(sites):
-        sys.stderr.write("[INFO] Processing site " + str(iter) + " of " + str(len(sites)) + f" ({site})\n")
-        matches = find_selector(site, selector)
-        for item in matches:
-            sys.stdout.write("Page: " + item[0] + "\tNum Blocks: " + str(item[1]) + "\n")
+        sites = get_all_nau_sites(login)
+        sys.stderr.write("[INFO] Found " + str(len(sites)) + " sites\n")
 
-    sys.stderr.write("[INFO] Process Complete...\n")
+        for iter, site in enumerate(sites):
+            sys.stderr.write("[INFO] Processing site " + str(iter) + " of " + str(len(sites)) + f" ({site})\n")
+            matches = find_selector(site, selector)
+            for item in matches:
+                sys.stdout.write("Page: " + item[0] + "\tNum Blocks: " + str(item[1]) + "\n")
+
+        sys.stderr.write("[INFO] Process Complete...\n")
+
+    except KeyboardInterrupt:
+        sys.stderr.write("[ERROR] Process Interrupted...\n")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
